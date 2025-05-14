@@ -1,9 +1,12 @@
 <?php
-/**
+/*
  * Plugin Name: WPFC Cache-Statistiken im Dashboard
+.* Plugin URI: https://github.com/linuxundich/wpfc-cache-stats-dashboard
  * Description: Zeigt WP Fastest Cache-Statistiken im Admin-Dashboard und bietet einen Button zum Leeren des Caches.
  * Version:     2.0
  * Author:      Christoph Langner
+ * Author URI:  https://linuxundich.de
+ * Text Domain: Linux und Ich
  */
 
 add_action('wp_dashboard_setup', 'wpfc_cache_stats_widget');
@@ -162,4 +165,33 @@ function count_all_files($dir) {
     }
 
     return $count;
+}
+
+add_filter('plugin_row_meta', 'wpfc_cache_stats_plugin_row_meta', 10, 2);
+
+function wpfc_cache_stats_plugin_row_meta($links, $file) {
+    if (plugin_basename(__FILE__) === $file && is_admin()) {
+        if (! function_exists('get_plugin_data')) {
+            require_once ABSPATH . 'wp-admin/includes/plugin.php';
+        }
+
+        // Plugin-Daten auslesen
+        $plugin_data = get_plugin_data(__FILE__, false, false);
+
+        /*Warum auch immer, plugin_uri bleibt immer leer:
+          $plugin_uri  = isset($plugin_data['PluginURI']) && !empty($plugin_data['PluginURI']) ? $plugin_data['PluginURI'] : '';*/
+        $plugin_uri = 'https://github.com/linuxundich/wpfc-cache-stats-dashboard';
+
+        // Überprüfen, ob Plugin URI vorhanden ist
+        if ($plugin_uri) {
+            $extra[] = '<a href="' . esc_url($plugin_uri) . '" target="_blank">Plugin-Website aufrufen</a>';
+        } else {
+            $extra[] = '<span style="color: red;">Plugin-Website nicht verfügbar</span>';
+        }
+
+        // Mische die Links
+        $links = array_merge($links, $extra);
+    }
+
+    return $links;
 }
