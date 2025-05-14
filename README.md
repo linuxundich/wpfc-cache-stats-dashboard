@@ -31,8 +31,10 @@ Nach dem Leeren werden die Statistiken direkt neu geladen – ohne Seitenreload.
 
 ## Installation
 
-1. Dieses Repository herunterladen oder klonen:
+1. Dieses Repository herunterladen oder klonen
 
-```bash
-git clone https://github.com/dein-benutzername/wpfc-cache-stats-dashboard.git
-```
+   ```bash
+   git clone https://github.com/linuxundich/wpfc-cache-stats-dashboard.git
+   ```
+
+2. Ordner `wpfc-cache-stats-widget` nach `/wp-content/plugins` kopieren
