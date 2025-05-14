@@ -19,6 +19,8 @@ Ein Button im Widget ermöglicht das Leeren des kompletten Caches via Kommandoze
 🔄 **Automatische Aktualisierung**:
 Nach dem Leeren werden die Statistiken direkt neu geladen – ohne Seitenreload.
 
+![WPFC Cache-Statistiken im Dashboard von WordPress](assets/wpfc-stats-dashboard.webp)
+
 ## Voraussetzungen
 
 - WordPress
