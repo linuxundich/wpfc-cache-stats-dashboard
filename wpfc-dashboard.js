@@ -1,37 +1,79 @@
-jQuery(document).ready(function($) {
-    const $btn = $('#wpfc-clear-cache-btn');
-    const $status = $('#wpfc-clear-cache-status');
-    const $widget = $('#wpfc_cache_stats_widget');
+/* global wpfcsConfig */
+( function () {
+	'use strict';
 
-    $btn.on('click', function(e) {
-        e.preventDefault();
+	const root = document.getElementById( 'wpfcs-root' );
+	if ( ! root || typeof wpfcsConfig === 'undefined' ) {
+		return;
+	}
 
-        $btn.prop('disabled', true);
-        $status.html('⏳ Bitte warten...');
+	function post( data ) {
+		const body = new URLSearchParams( Object.assign( { nonce: wpfcsConfig.nonce }, data ) );
+		return fetch( wpfcsConfig.ajaxUrl, { method: 'POST', credentials: 'same-origin', body } )
+			.then( ( r ) => r.json() );
+	}
 
-        $.post(wpfc_ajax_obj.ajax_url, {
-            action: 'wpfc_clear_cache',
-            nonce: wpfc_ajax_obj.nonce
-        }, function(response) {
-            if (response.success) {
-                $status.html('✅ ' + response.data.message);
+	function loadStats( force ) {
+		root.classList.add( 'is-busy' );
+		return post( { action: 'wpfcs_stats', force: force ? '1' : '' } )
+			.then( ( res ) => {
+				if ( res.success ) {
+					// Nur den Inhalt ersetzen – der Widget-Rahmen samt Titelleiste bleibt stehen.
+					root.innerHTML = res.data.html;
+				} else {
+					throw new Error( ( res.data && res.data.message ) || 'Unbekannter Fehler' );
+				}
+			} )
+			.catch( ( err ) => {
+				root.insertAdjacentHTML( 'beforeend', '<p class="wpfcs-warn">⚠️ Statistiken konnten nicht geladen werden: ' + String( err.message ).replace( /</g, '&lt;' ) + '</p>' );
+			} )
+			.finally( () => root.classList.remove( 'is-busy' ) );
+	}
 
-                // Danach Widget-Inhalt neu laden
-                $.post(wpfc_ajax_obj.ajax_url, {
-                    action: 'wpfc_cache_stats_refresh'
-                }, function(refreshResponse) {
-                    if (refreshResponse.success) {
-                        $widget.html(refreshResponse.data.html);
-                    } else {
-                        $widget.append('<p>⚠️ Fehler beim Neuladen der Statistiken.</p>');
-                    }
-                });
+	// Event-Delegation: funktioniert auch nach dem Austausch des Inhalts per AJAX.
+	root.addEventListener( 'click', ( e ) => {
+		if ( e.target.closest( '.wpfcs-refresh' ) ) {
+			e.preventDefault();
+			loadStats( true );
+			return;
+		}
 
-            } else {
-                $status.html('❌ ' + response.data.message);
-            }
+		const btn = e.target.closest( '.wpfcs-clear' );
+		if ( ! btn ) {
+			return;
+		}
+		const minified = root.querySelector( '.wpfcs-minified' );
+		const withMin = !! ( minified && minified.checked );
+		const msg = 'Wirklich den kompletten Seiten-Cache leeren?\n\n'
+			+ 'Danach muss WordPress jede Seite beim nächsten Aufruf neu erzeugen. '
+			+ 'Bei viel Besucher- oder Crawler-Verkehr kann das den Server vorübergehend stark belasten.'
+			+ ( withMin ? '\n\nZusätzlich werden die minifizierten CSS/JS-Dateien gelöscht.' : '' );
+		if ( ! window.confirm( msg ) ) {
+			return;
+		}
 
-            $btn.prop('disabled', false);
-        });
-    });
-});
+		const status = root.querySelector( '.wpfcs-status' );
+		btn.disabled = true;
+		status.textContent = '⏳ Bitte warten …';
+		post( { action: 'wpfcs_clear', minified: withMin ? '1' : '' } )
+			.then( ( res ) => {
+				if ( ! res.success ) {
+					throw new Error( ( res.data && res.data.message ) || 'Unbekannter Fehler' );
+				}
+				return loadStats( true ).then( () => {
+					const s = root.querySelector( '.wpfcs-status' );
+					if ( s ) {
+						s.textContent = '✅ ' + res.data.message;
+					}
+				} );
+			} )
+			.catch( ( err ) => {
+				status.textContent = '❌ ' + err.message;
+				btn.disabled = false;
+			} );
+	} );
+
+	if ( root.querySelector( '[data-wpfcs-autoload]' ) ) {
+		loadStats( false );
+	}
+}() );
