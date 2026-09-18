@@ -1,15 +1,26 @@
 #wpfcs-root.is-busy { opacity: .55; pointer-events: none; transition: opacity .2s; }
-#wpfcs-root .wpfcs-coverage { margin-bottom: 12px; }
+#wpfcs-root .wpfcs-coverage { margin-bottom: 6px; }
 #wpfcs-root .wpfcs-coverage-head { display: flex; justify-content: space-between; gap: 8px; }
 #wpfcs-root .wpfcs-meter { height: 8px; margin: 6px 0 4px; background: #f0f0f1; border-radius: 4px; overflow: hidden; }
 #wpfcs-root .wpfcs-meter span { display: block; height: 100%; background: #ff6600; }
-#wpfcs-root .wpfcs-coverage .description { margin: 0; }
+#wpfcs-root .wpfcs-history { margin: 0 0 10px; }
+#wpfcs-root .wpfcs-history svg { display: block; width: 100%; height: 40px; }
+#wpfcs-root .wpfcs-history .wpfcs-line { fill: none; stroke: #ff6600; stroke-width: 2; vector-effect: non-scaling-stroke; }
+#wpfcs-root .wpfcs-history .wpfcs-grid { stroke: #dcdcde; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
+#wpfcs-root .wpfcs-history figcaption { color: #646970; font-size: 12px; }
 #wpfcs-root .wpfcs-table { margin-bottom: 10px; }
 #wpfcs-root .wpfcs-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+#wpfcs-root .wpfcs-subhead { margin: 10px 0 4px; font-weight: 600; }
+#wpfcs-root .wpfcs-hot-list { margin: 0 0 6px 1.6em; }
+#wpfcs-root .wpfcs-hot-list li { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 3px; }
+#wpfcs-root .wpfcs-hot-list .num { color: #646970; white-space: nowrap; font-variant-numeric: tabular-nums; }
 #wpfcs-root .wpfcs-facts { margin: 0 0 8px; color: #50575e; }
 #wpfcs-root .wpfcs-facts li { margin-bottom: 2px; }
+#wpfcs-root .wpfcs-details { margin: 10px 0; }
+#wpfcs-root .wpfcs-details summary { cursor: pointer; color: #2271b1; margin-bottom: 8px; }
 #wpfcs-root .wpfcs-stand { color: #646970; font-size: 12px; }
 #wpfcs-root .wpfcs-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
-#wpfcs-root .wpfcs-status { font-weight: 600; }
+#wpfcs-root .wpfcs-status, #wpfcs-root .wpfcs-warm-status { font-weight: 600; }
 #wpfcs-root .wpfcs-warn { color: #b32d2e; }
-#wpfcs-root .wpfcs-purges-head { margin: 8px 0 2px; font-weight: 600; }
+#wpfcs-root .wpfcs-ok { color: #00a32a; }
+#wpfcs-root .wpfcs-notice { padding: 8px 10px; background: #fcf0f1; border-left: 4px solid #d63638; }
