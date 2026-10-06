@@ -3,7 +3,7 @@
  * Plugin Name: WPFC Cache-Statistiken im Dashboard
  * Plugin URI:  https://github.com/linuxundich/wpfc-cache-stats-dashboard
  * Description: Zeigt WP-Fastest-Cache-Statistiken im Admin-Dashboard – Cache-Abdeckung, meistgelesene ungecachte Beiträge mit gedrosseltem Vorwärmen, Verlauf und Warnungen – plus Cache-Spalte in der Beitragsliste.
- * Version:     4.0
+ * Version:     4.1
  * Requires at least: 6.2
  * Requires PHP: 8.0
  * Author:      Christoph Langner
@@ -13,7 +13,7 @@
 
 defined('ABSPATH') || exit;
 
-const WPFCS_VERSION   = '4.0';
+const WPFCS_VERSION   = '4.1';
 const WPFCS_TRANSIENT = 'wpfcs_stats';
 const WPFCS_TTL       = 15 * MINUTE_IN_SECONDS;
 

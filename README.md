@@ -31,6 +31,7 @@ define('WPFCS_ERROR_LOG', '/pfad/zum/error_log');
 - Spalte **„Cache“**: ✓ mit Alter der Cache-Datei oder –
 - Zeilenaktion **„Cache leeren“** – leert nur diese eine URL (nicht wie WPFCs eigene Funktion zusätzlich Startseite und Archive)
 - Zeilenaktion **„Vorwärmen“** – legt den Beitrag in die Vorwärm-Warteschlange
+- Mit dem Plugin **LUI Admin UI** (linuxundich.de) erscheint statt der eigenen Spalte eine Pille „Cache ✓/–“ in dessen Spalte „Status“; andere Plugins ergänzen den Tooltip über den Filter `wpfcs_cache_note`. Nach „Cache leeren“ feuert die Aktion `wpfcs_post_cleared` (Beitrags-ID).
 
 ## Performance
 

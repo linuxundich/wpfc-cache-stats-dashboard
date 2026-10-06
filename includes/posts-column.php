@@ -9,13 +9,48 @@ defined('ABSPATH') || exit;
  * Die Aktionen laufen über admin-post.php (normale Links mit Nonce, kein AJAX).
  */
 
-add_filter('manage_post_posts_columns', 'wpfcs_posts_column');
-add_action('manage_post_posts_custom_column', 'wpfcs_posts_column_value', 10, 2);
+add_action('plugins_loaded', 'wpfcs_posts_column_init');
 add_filter('post_row_actions', 'wpfcs_post_row_actions', 10, 2);
 add_action('admin_post_wpfcs_post_clear', 'wpfcs_handle_post_clear');
 add_action('admin_post_wpfcs_post_warm', 'wpfcs_handle_post_warm');
 add_action('admin_notices', 'wpfcs_post_notices');
 add_action('admin_head-edit.php', 'wpfcs_posts_column_css');
+
+/**
+ * With LUI Admin UI (linuxundich.de) the cache state is a pill in its shared
+ * "Status" column instead of an own column.
+ */
+function wpfcs_posts_column_init(): void {
+    if (function_exists('lui_admin_pill')) {
+        add_filter('lui_admin_status_pills', 'wpfcs_status_pill', 30, 3);
+        return;
+    }
+    add_filter('manage_post_posts_columns', 'wpfcs_posts_column');
+    add_action('manage_post_posts_custom_column', 'wpfcs_posts_column_value', 10, 2);
+}
+
+/**
+ * Pill for the "Status" column. Other plugins may add to the tooltip via
+ * the filter wpfcs_cache_note (lui-cache-expiry adds the expiry time).
+ *
+ * @param array<string,string> $pills
+ * @return array<string,string>
+ */
+function wpfcs_status_pill(array $pills, int $post_id, string $post_type): array {
+    if ('post' !== $post_type || 'publish' !== get_post_status($post_id) || !current_user_can('manage_options') || !has_action('wpfc_clear_all_cache')) {
+        return $pills;
+    }
+    $mtime = wpfcs_post_cache_mtime($post_id);
+    $title = $mtime
+        ? sprintf('im Cache seit %s (%s)', human_time_diff($mtime), wp_date('d.m.Y H:i', $mtime))
+        : 'nicht im Cache';
+    $note  = (string) apply_filters('wpfcs_cache_note', '', $post_id);
+    if ('' !== $note) {
+        $title .= ' · ' . $note;
+    }
+    $pills['cache'] = lui_admin_pill($mtime ? 'ok' : 'off', $mtime ? 'Cache ✓' : 'Cache –', '', $title);
+    return $pills;
+}
 
 function wpfcs_posts_column(array $columns): array {
     if (current_user_can('manage_options') && has_action('wpfc_clear_all_cache')) {
@@ -76,6 +111,8 @@ function wpfcs_handle_post_clear(): void {
         wp_delete_file($file);
     }
     delete_transient(WPFCS_TRANSIENT);
+    /** Lets other plugins react, e.g. lui-cache-expiry sets the next expiry. */
+    do_action('wpfcs_post_cleared', $post_id);
     wpfcs_post_redirect('cleared');
 }
 
