@@ -19,7 +19,7 @@ All notable changes to this plugin. Format based on
   lui-cache-expiry for the expiry time).
 - Action `wpfcs_post_cleared` after the row action “Cache leeren”.
 
-## [4.0]
+## [4.0] – 2026-09-18
 
 ### Added
 - "Most read, but not cached" section with throttled warm-up via cron.
@@ -33,7 +33,7 @@ All notable changes to this plugin. Format based on
 - Details collapsed by default, code split into several files,
   `uninstall.php` added.
 
-## [3.0]
+## [3.0] – 2026-09-18
 
 ### Added
 - Post cache coverage, sizes, ages, preload status and the last cache purges.
